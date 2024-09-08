@@ -4,47 +4,48 @@
  */
 package com.br.bodysync.model;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 /**
  *
  * @author Carlos
  */
 @Entity
-public class Questions {
+public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String description;
-    
+
     @Column
     private boolean status;
-            
-    @Column
+
+    @Column(nullable = false)
     private LocalDateTime createdDate;
-    
+
     @Column
     private LocalDateTime updateDate;
 
-    public Questions() {
+    public Question() {
     }
 
-    public Questions(Long id) {
+    public Question(Long id) {
         this.id = id;
     }
 
-    public Questions(Long id, String description, boolean status) {
+    public Question(Long id, String description, boolean status) {
         this.id = id;
         this.description = description;
         this.status = status;
@@ -116,9 +117,8 @@ public class Questions {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Questions other = (Questions) obj;
+        final Question other = (Question) obj;
         return Objects.equals(this.id, other.id);
     }
-    
-    
+
 }

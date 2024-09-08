@@ -1,19 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.br.bodysync.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 
 /**
  *
  * @author Carlos
  */
-public class QuestionsDTO {
+public class QuestionDTO {
  
     private Long id;
 
@@ -22,14 +15,14 @@ public class QuestionsDTO {
     
     private boolean status;
 
-    public QuestionsDTO() {
+    public QuestionDTO() {
     }
 
-    public QuestionsDTO(Long id) {
+    public QuestionDTO(Long id) {
         this.id = id;
     }
 
-    public QuestionsDTO(Long id, String description, boolean status) {
+    public QuestionDTO(Long id, String description, boolean status) {
         this.id = id;
         this.description = description;
         this.status = status;
@@ -58,6 +51,5 @@ public class QuestionsDTO {
     public void setStatus(boolean status) {
         this.status = status;
     }
-  
   
 }
