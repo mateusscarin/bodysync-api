@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.br.bodysync.model.enumerated.PersonType;
+import com.br.bodysync.model.enumerated.UserType;
 
 @SuppressWarnings("unused")
 public class UserDetailsImpl implements UserDetails {
@@ -19,7 +19,7 @@ public class UserDetailsImpl implements UserDetails {
     private final String password;
     private final Collection<? extends GrantedAuthority> permissions;
 
-    public UserDetailsImpl(Long id, String cpf, String email, String fullName, String password, PersonType type) {
+    public UserDetailsImpl(Long id, String cpf, String email, String fullName, String password, UserType type) {
         this.id = id;
         this.cpf = cpf;
         this.fullName = fullName;

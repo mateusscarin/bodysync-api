@@ -1,7 +1,7 @@
 package com.br.bodysync.model.enumerated;
 
-public enum PersonType {
+public enum UserType {
     ADMIN,
+    PERSONAL_TRAINER,
     TRAINEE,
-    PERSONAL_TRAINEER,
 }
