@@ -61,7 +61,7 @@ public abstract class User implements Serializable {
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
-    @CPF
+    @CPF(message = "O CPF informado tem formato inválida!")
     @Column(unique = true, nullable = false)
     @NotNull(message = "O CPF deve ser informado!")
     private String cpf;
