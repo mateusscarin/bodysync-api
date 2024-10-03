@@ -47,7 +47,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 @Configuration
 @EnableWebSecurity
 @SecurityScheme(type = SecuritySchemeType.HTTP, name = "Bearer Authentication", scheme = "bearer", bearerFormat = "JWT", in = SecuritySchemeIn.HEADER)
-@OpenAPIDefinition(security = @SecurityRequirement(name = "Bearer Authentication"), info = @Info(title = "SympotoScan API v1.0"))
+@OpenAPIDefinition(security = @SecurityRequirement(name = "Bearer Authentication"), info = @Info(title = "BodySync API v1.0"))
 public class JwtSecurityConfig {
 
     @Value("${jwt.public.key}")

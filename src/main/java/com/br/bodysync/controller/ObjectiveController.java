@@ -19,85 +19,86 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/objective")
 public class ObjectiveController {
 
-    @Autowired
-    private ObjectiveService questionsService;
+        @Autowired
+        private ObjectiveService objectiveService;
 
-    @PostMapping
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Criado (Created)", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ObjectiveDTO.class)) }),
-            @ApiResponse(responseCode = "401", description = "Não Autorizado (Unauthorized)"),
-            @ApiResponse(responseCode = "404", description = "Não Encontrado (Not Found)"),
-            @ApiResponse(responseCode = "500", description = "Erro interno (Internal Server Error)")
-    })
-    public ResponseEntity<Object> save(@RequestBody ObjectiveDTO object) throws Exception {
-        return questionsService.save(object);
-    }
+        @PostMapping
+        @ApiResponses({
+                        @ApiResponse(responseCode = "201", description = "Criado (Created)", content = {
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = ObjectiveDTO.class)) }),
+                        @ApiResponse(responseCode = "401", description = "Não Autorizado (Unauthorized)"),
+                        @ApiResponse(responseCode = "404", description = "Não Encontrado (Not Found)"),
+                        @ApiResponse(responseCode = "500", description = "Erro interno (Internal Server Error)")
+        })
+        public ResponseEntity<Object> save(@RequestBody @Valid ObjectiveDTO object) throws Exception {
+                return objectiveService.save(object);
+        }
 
-    @GetMapping
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Criado (Created)", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ObjectiveDTO.class)) }),
-            @ApiResponse(responseCode = "401", description = "Não Autorizado (Unauthorized)"),
-            @ApiResponse(responseCode = "404", description = "Não Encontrado (Not Found)"),
-            @ApiResponse(responseCode = "500", description = "Erro interno (Internal Server Error)")
-    })
-    public ResponseEntity<Object> findAll() throws Exception {
-        return questionsService.findAll();
-    }
+        @GetMapping
+        @ApiResponses({
+                        @ApiResponse(responseCode = "201", description = "Criado (Created)", content = {
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = ObjectiveDTO.class)) }),
+                        @ApiResponse(responseCode = "401", description = "Não Autorizado (Unauthorized)"),
+                        @ApiResponse(responseCode = "404", description = "Não Encontrado (Not Found)"),
+                        @ApiResponse(responseCode = "500", description = "Erro interno (Internal Server Error)")
+        })
+        public ResponseEntity<Object> findAll() throws Exception {
+                return objectiveService.findAll();
+        }
 
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Criado (Created)", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ObjectiveDTO.class)) }),
-            @ApiResponse(responseCode = "401", description = "Não Autorizado (Unauthorized)"),
-            @ApiResponse(responseCode = "404", description = "Não Encontrado (Not Found)"),
-            @ApiResponse(responseCode = "500", description = "Erro interno (Internal Server Error)")
-    })
-    @GetMapping("/{idObjeto}")
-    public ResponseEntity<Object> findById(@PathVariable("idObjeto") Long idObject)
-            throws Exception {
-        return questionsService.findById(idObject);
-    }
+        @ApiResponses({
+                        @ApiResponse(responseCode = "201", description = "Criado (Created)", content = {
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = ObjectiveDTO.class)) }),
+                        @ApiResponse(responseCode = "401", description = "Não Autorizado (Unauthorized)"),
+                        @ApiResponse(responseCode = "404", description = "Não Encontrado (Not Found)"),
+                        @ApiResponse(responseCode = "500", description = "Erro interno (Internal Server Error)")
+        })
+        @GetMapping("/{idObjeto}")
+        public ResponseEntity<Object> findById(@PathVariable("idObjeto") Long idObject)
+                        throws Exception {
+                return objectiveService.findById(idObject);
+        }
 
-    @PutMapping("/{idObjeto}")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Criado (Created)", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ObjectiveDTO.class)) }),
-            @ApiResponse(responseCode = "401", description = "Não Autorizado (Unauthorized)"),
-            @ApiResponse(responseCode = "404", description = "Não Encontrado (Not Found)"),
-            @ApiResponse(responseCode = "500", description = "Erro interno (Internal Server Error)")
-    })
-    public ResponseEntity<Object> edit(@PathVariable("idObjeto") Long idObject, @RequestBody ObjectiveDTO object)
-            throws Exception {
-        return questionsService.edit(idObject, object);
-    }
+        @PutMapping("/{idObjeto}")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "201", description = "Criado (Created)", content = {
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = ObjectiveDTO.class)) }),
+                        @ApiResponse(responseCode = "401", description = "Não Autorizado (Unauthorized)"),
+                        @ApiResponse(responseCode = "404", description = "Não Encontrado (Not Found)"),
+                        @ApiResponse(responseCode = "500", description = "Erro interno (Internal Server Error)")
+        })
+        public ResponseEntity<Object> edit(@PathVariable("idObjeto") Long idObject,
+                        @RequestBody @Valid ObjectiveDTO object) throws Exception {
+                return objectiveService.edit(idObject, object);
+        }
 
-    @DeleteMapping("/{idObjeto}")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Criado (Created)", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ObjectiveDTO.class)) }),
-            @ApiResponse(responseCode = "401", description = "Não Autorizado (Unauthorized)"),
-            @ApiResponse(responseCode = "404", description = "Não Encontrado (Not Found)"),
-            @ApiResponse(responseCode = "500", description = "Erro interno (Internal Server Error)")
-    })
-    public ResponseEntity<Object> delete(@PathVariable("idObjeto") Long idObject) throws Exception {
-        return questionsService.delete(idObject);
-    }
+        @DeleteMapping("/{idObjeto}")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "201", description = "Criado (Created)", content = {
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = ObjectiveDTO.class)) }),
+                        @ApiResponse(responseCode = "401", description = "Não Autorizado (Unauthorized)"),
+                        @ApiResponse(responseCode = "404", description = "Não Encontrado (Not Found)"),
+                        @ApiResponse(responseCode = "500", description = "Erro interno (Internal Server Error)")
+        })
+        public ResponseEntity<Object> delete(@PathVariable("idObjeto") Long idObject) throws Exception {
+                return objectiveService.delete(idObject);
+        }
 
-    @PatchMapping("/{idObjeto}/status")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Criado (Created)", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ObjectiveDTO.class)) }),
-            @ApiResponse(responseCode = "401", description = "Não Autorizado (Unauthorized)"),
-            @ApiResponse(responseCode = "404", description = "Não Encontrado (Not Found)"),
-            @ApiResponse(responseCode = "500", description = "Erro interno (Internal Server Error)")
-    })
-    public ResponseEntity<Object> changeStatus(@PathVariable("idObjeto") Long idObject) throws Exception {
-        return questionsService.changeStatus(idObject);
-    }
+        @PatchMapping("/{idObjeto}/status")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "201", description = "Criado (Created)", content = {
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = ObjectiveDTO.class)) }),
+                        @ApiResponse(responseCode = "401", description = "Não Autorizado (Unauthorized)"),
+                        @ApiResponse(responseCode = "404", description = "Não Encontrado (Not Found)"),
+                        @ApiResponse(responseCode = "500", description = "Erro interno (Internal Server Error)")
+        })
+        public ResponseEntity<Object> changeStatus(@PathVariable("idObjeto") Long idObject) throws Exception {
+                return objectiveService.changeStatus(idObject);
+        }
 }
