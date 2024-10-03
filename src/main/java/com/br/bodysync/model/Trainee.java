@@ -20,6 +20,10 @@ public class Trainee extends User {
     @JoinColumn(name = "objective_id")
     private Objective objective;
 
+    @ManyToOne
+    @JoinColumn(name = "personal_trainer_id")
+    private PersonalTrainer personalTrainer;
+
     public Objective getObjective() {
         return objective;
     }
@@ -46,6 +50,14 @@ public class Trainee extends User {
 
     public void setTime(Double time) {
         this.time = time;
+    }
+
+    public PersonalTrainer getPersonalTrainer() {
+        return personalTrainer;
+    }
+
+    public void setPersonalTrainer(PersonalTrainer personalTrainer) {
+        this.personalTrainer = personalTrainer;
     }
 
 }

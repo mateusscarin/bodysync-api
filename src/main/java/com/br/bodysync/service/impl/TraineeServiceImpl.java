@@ -11,34 +11,38 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.br.bodysync.model.PersonalTrainer;
-import com.br.bodysync.model.dto.PersonalTrainerDTO;
+import com.br.bodysync.model.Trainee;
+import com.br.bodysync.model.dto.TraineeDTO;
 import com.br.bodysync.model.mapper.CustomObjectMapper;
-import com.br.bodysync.repository.PersonalTrainerRepository;
-import com.br.bodysync.service.PersonalTrainerService;
+import com.br.bodysync.repository.TraineeRepository;
+import com.br.bodysync.service.TraineeService;
 import com.br.bodysync.service.util.ApiResponse;
 
 @Service
-public class PersonalTrainerServiceImpl implements PersonalTrainerService {
+public class TraineeServiceImpl implements TraineeService {
 
         @Autowired
-        private PersonalTrainerRepository personalTrainerRepository;
+        private TraineeRepository personalTrainerRepository;
 
         @Autowired
         private BCryptPasswordEncoder bCryptPasswordEncoder;
 
         @Autowired
-        private CustomObjectMapper<PersonalTrainer, PersonalTrainerDTO> customObjectMapper;
+        private CustomObjectMapper<Trainee, TraineeDTO> customObjectMapper;
 
         @Override
-        public ResponseEntity<Object> save(PersonalTrainerDTO dto) throws Exception {
+        public ResponseEntity<Object> save(TraineeDTO dto) throws Exception {
                 if (personalTrainerRepository.existsByEmail(dto.email())) {
                         return ResponseEntity.badRequest().body(new ApiResponse<>(
-                                        "Não é possivel cadastrar o personal. Já existe outro personal com o mesmo e-mail."));
+                                        "Não é possivel cadastrar o aluno. Já existe outra aluno com o mesmo email."));
                 }
-                PersonalTrainer toSave = customObjectMapper.convertToEntity(dto);
+                if (personalTrainerRepository.existsByCpf(dto.cpf())) {
+                        return ResponseEntity.badRequest().body(new ApiResponse<>(
+                                        "Não é possivel cadastrar o aluno. Já existe outra aluno com o mesmo CPF."));
+                }
+                Trainee toSave = customObjectMapper.convertToEntity(dto);
                 toSave.setPassword(bCryptPasswordEncoder.encode(dto.password()));
-                PersonalTrainer result = personalTrainerRepository
+                Trainee result = personalTrainerRepository
                                 .saveAndFlush(toSave);
                 return ResponseEntity.created(
                                 ServletUriComponentsBuilder
@@ -50,39 +54,39 @@ public class PersonalTrainerServiceImpl implements PersonalTrainerService {
         }
 
         @Override
-        public ResponseEntity<Object> edit(String email, PersonalTrainerDTO dto) throws Exception {
-                PersonalTrainer dadosDto = customObjectMapper.convertToEntity(dto);
-                PersonalTrainer paraEditar = personalTrainerRepository.findByEmail(email)
-                                .orElseThrow(() -> new NoSuchElementException("Personal não encontrado!"));
+        public ResponseEntity<Object> edit(String email, TraineeDTO dto) throws Exception {
+                Trainee dadosDto = customObjectMapper.convertToEntity(dto);
+                Trainee paraEditar = personalTrainerRepository.findByEmail(email)
+                                .orElseThrow(() -> new NoSuchElementException("Aluno não encontrado!"));
                 BeanUtils.copyProperties(dadosDto, paraEditar, "id", "createdDate", "status");
-                PersonalTrainer objetoAtualizado = personalTrainerRepository.saveAndFlush(dadosDto);
+                Trainee objetoAtualizado = personalTrainerRepository.saveAndFlush(dadosDto);
                 return ResponseEntity.status(HttpStatus.OK)
                                 .body(new ApiResponse<>(customObjectMapper.convertToDto(objetoAtualizado)));
         }
 
         @Override
         public ResponseEntity<Object> findByEmail(String email) throws Exception {
-                PersonalTrainer personalTrainer = personalTrainerRepository.findByEmail(email)
-                                .orElseThrow(() -> new NoSuchElementException("Personal não encontrado!"));
+                Trainee personalTrainer = personalTrainerRepository.findByEmail(email)
+                                .orElseThrow(() -> new NoSuchElementException("Aluno não encontrado!"));
                 return ResponseEntity.status(HttpStatus.OK)
                                 .body(new ApiResponse<>(customObjectMapper.convertToDto(personalTrainer)));
         }
 
         @Override
         public ResponseEntity<Object> findAll() throws Exception {
-                List<PersonalTrainerDTO> questionsDTOs = customObjectMapper
+                List<TraineeDTO> questionsDTOs = customObjectMapper
                                 .convertToDtoList(personalTrainerRepository.findAll());
                 if (questionsDTOs.isEmpty()) {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                        .body(new ApiResponse<>("Não existe personais cadastrados no Sistemas"));
+                                        .body(new ApiResponse<>("Não existe alunos cadastrados no Sistemas"));
                 }
                 return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(questionsDTOs));
         }
 
         @Override
         public ResponseEntity<Object> changeStatus(String email) throws Exception {
-                PersonalTrainer personalTrainer = personalTrainerRepository.findByEmail(email)
-                                .orElseThrow(() -> new NoSuchElementException("Personal não encontrado!"));
+                Trainee personalTrainer = personalTrainerRepository.findByEmail(email)
+                                .orElseThrow(() -> new NoSuchElementException("Aluno não encontrado!"));
                 personalTrainer.setStatus(!personalTrainer.isStatus());
                 personalTrainerRepository.saveAndFlush(personalTrainer);
                 return ResponseEntity.status(HttpStatus.OK)
