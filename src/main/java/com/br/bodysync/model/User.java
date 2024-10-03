@@ -55,12 +55,6 @@ public abstract class User implements Serializable {
     @NotNull(message = "A data de aniversário deve ser informada!")
     private LocalDate birthDate;
 
-    @Column(name = "created_date")
-    private LocalDateTime createdDate;
-
-    @Column(name = "update_date")
-    private LocalDateTime updateDate;
-
     @CPF(message = "O CPF informado tem formato inválida!")
     @Column(unique = true, nullable = false)
     @NotNull(message = "O CPF deve ser informado!")
@@ -80,6 +74,16 @@ public abstract class User implements Serializable {
     @NotBlank(message = "Senha não pode ser vazia!")
     @JsonIgnore
     private String password;
+
+    @Column(nullable = false)
+    @NotNull(message = "Status não pode ser nulo!")
+    private boolean status;
+
+    @Column(name = "created_date", updatable = false)
+    private LocalDateTime createdDate;
+
+    @Column(name = "update_date")
+    private LocalDateTime updateDate;
 
     @PrePersist
     private void prePersist() {
@@ -157,6 +161,14 @@ public abstract class User implements Serializable {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     public void setCreatedDate(LocalDateTime createdDate) {

@@ -6,35 +6,37 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.br.bodysync.model.PersonalTrainer;
-import com.br.bodysync.model.dto.UserDTO;
+import com.br.bodysync.model.dto.PersonalTrainerDTO;
 import com.br.bodysync.model.mapper.CustomObjectMapper;
 
 @Component
-public class PersonalTrainerMapperImpl implements CustomObjectMapper<PersonalTrainer, UserDTO> {
+public class PersonalTrainerMapperImpl implements CustomObjectMapper<PersonalTrainer, PersonalTrainerDTO> {
 
     @Override
-    public UserDTO convertToDto(PersonalTrainer entity) {
-        UserDTO dto = new UserDTO();
-        dto.setBirthDate(entity.getBirthDate());
-        dto.setFullName(entity.getFullName());
-        dto.setId(entity.getId());
-        dto.setSex(entity.getSex());
-        return dto;
+    public PersonalTrainerDTO convertToDto(PersonalTrainer entity) {
+        return new PersonalTrainerDTO(
+                entity.getFullName(),
+                entity.getCpf(),
+                null,
+                entity.getBirthDate(),
+                entity.getSex(),
+                entity.getEmail());
     }
 
     @Override
-    public PersonalTrainer convertToEntity(UserDTO dto) {
+    public PersonalTrainer convertToEntity(PersonalTrainerDTO dto) {
         PersonalTrainer personal = new PersonalTrainer();
-        personal.setBirthDate(dto.getBirthDate());
-        personal.setCpf(dto.getCpf());
-        personal.setEmail(dto.getEmail());
-        personal.setFullName(dto.getFullName());
-        personal.setSex(dto.getSex());
+        personal.setBirthDate(dto.birthDate());
+        personal.setCpf(dto.cpf());
+        personal.setPassword(dto.password());
+        personal.setEmail(dto.email());
+        personal.setFullName(dto.fullName());
+        personal.setSex(dto.sex());
         return personal;
     }
 
     @Override
-    public List<UserDTO> convertToDtoList(List<PersonalTrainer> entityList) {
+    public List<PersonalTrainerDTO> convertToDtoList(List<PersonalTrainer> entityList) {
         return entityList.stream()
                 .map(objective -> convertToDto(objective))
                 .collect(Collectors.toList());
