@@ -13,6 +13,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.br.bodysync.service.util.ApiResponse;
 
@@ -40,6 +41,13 @@ public class ControllerExceptionHandler {
     public ResponseEntity<Object> tratarErrosDeObjetoNaoEncontrado(NoSuchElementException ex,
             HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(ex.getMessage()));
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Object> tratarErrosDeResponseStatus(ResponseStatusException ex,
+            HttpServletRequest request) {
+        return ResponseEntity.status(ex.getStatusCode())
                 .body(new ApiResponse<>(ex.getMessage()));
     }
 

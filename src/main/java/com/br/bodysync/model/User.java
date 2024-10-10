@@ -2,10 +2,12 @@ package com.br.bodysync.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.hibernate.validator.constraints.br.CPF;
 
-import com.br.bodysync.model.enumerated.PersonType;
+import com.br.bodysync.model.enumerated.BiologicSex;
+import com.br.bodysync.model.enumerated.UserType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -19,6 +21,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
@@ -28,55 +32,67 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.INTEGER)
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "cpf", "email" }))
-public abstract class Person implements Serializable {
+@Table(name = "tb_user", uniqueConstraints = @UniqueConstraint(columnNames = { "cpf", "email" }))
+public abstract class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Column
     @Id
+    @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "user_type", insertable = false, updatable = false)
     @Enumerated(EnumType.ORDINAL)
-    private PersonType type;
+    private UserType type;
 
-    @Column(name = "full_name")
-    @NotNull
-    @NotBlank
+    @Column(name = "full_name", nullable = false)
+    @NotNull(message = "O nome deve ser informado!")
+    @NotBlank(message = "O nome não pode ser vazio!")
     private String fullName;
 
-    @Column(name = "birth_date")
-    @NotNull
+    @Column(name = "birth_date", nullable = false)
+    @NotNull(message = "A data de aniversário deve ser informada!")
     private LocalDate birthDate;
 
-    @Column(unique = true)
-    @NotNull
-    @CPF
+    @CPF(message = "O CPF informado tem formato inválida!")
+    @Column(unique = true, nullable = false)
+    @NotNull(message = "O CPF deve ser informado!")
     private String cpf;
 
-    @Column
-    @NotNull
-    private String sex;
+    @Column(nullable = false)
+    @NotNull(message = "O sexo biológico deve ser informado!")
+    private BiologicSex sex;
 
-    @Column(unique = true)
-    @NotNull
-    @Email
+    @Column(unique = true, nullable = false)
+    @NotNull(message = "O e-mail deve ser informado!")
+    @Email(message = "O formato do e-mail é inválido!")
     private String email;
 
     @Column
-    @NotNull
-    @NotBlank
+    @NotNull(message = "Senha deve ser informada!")
+    @NotBlank(message = "Senha não pode ser vazia!")
     @JsonIgnore
     private String password;
 
-    public Person() {
+    @Column(nullable = false)
+    @NotNull(message = "Status não pode ser nulo!")
+    private boolean status;
 
+    @Column(name = "created_date", updatable = false)
+    private LocalDateTime createdDate;
+
+    @Column(name = "update_date")
+    private LocalDateTime updateDate;
+
+    @PrePersist
+    private void prePersist() {
+        setCreatedDate(LocalDateTime.now());
     }
 
-    public Person(Long id) {
-        this.id = id;
+    @PreUpdate
+    private void preUpdate() {
+        setUpdateDate(LocalDateTime.now());
     }
 
     public Long getId() {
@@ -87,11 +103,11 @@ public abstract class Person implements Serializable {
         this.id = id;
     }
 
-    public PersonType getType() {
+    public UserType getType() {
         return type;
     }
 
-    public void setType(PersonType type) {
+    public void setType(UserType type) {
         this.type = type;
     }
 
@@ -119,11 +135,11 @@ public abstract class Person implements Serializable {
         this.cpf = cpf;
     }
 
-    public String getSex() {
+    public BiologicSex getSex() {
         return sex;
     }
 
-    public void setSex(String sex) {
+    public void setSex(BiologicSex sex) {
         this.sex = sex;
     }
 
@@ -143,6 +159,30 @@ public abstract class Person implements Serializable {
         this.password = password;
     }
 
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public LocalDateTime getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(LocalDateTime updateDate) {
+        this.updateDate = updateDate;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -151,7 +191,7 @@ public abstract class Person implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Person other = (Person) obj;
+        User other = (User) obj;
         if (id == null) {
             if (other.id != null)
                 return false;

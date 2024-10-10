@@ -9,6 +9,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.br.bodysync.model.Administrator;
+import com.br.bodysync.model.enumerated.BiologicSex;
 import com.br.bodysync.repository.AdministratorRepository;
 
 @Configuration
@@ -30,7 +31,7 @@ public class InitialConfig {
         administrador.setEmail("admin@bodysync.com.br");
         administrador.setPassword(passwordEncoder.encode("123Mudar*"));
         administrador.setFullName("Admin");
-        administrador.setSex("Masculino");
+        administrador.setSex(BiologicSex.MASC);
 
         administratorRepository.save(administrador);
     }

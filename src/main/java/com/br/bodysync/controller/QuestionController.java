@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 
 /**
  *
@@ -39,7 +40,7 @@ public class QuestionController {
                         @ApiResponse(responseCode = "404", description = "Não Encontrado (Not Found)"),
                         @ApiResponse(responseCode = "500", description = "Erro interno (Internal Server Error)")
         })
-        public ResponseEntity<Object> save(@RequestBody QuestionDTO object) throws Exception {
+        public ResponseEntity<Object> save(@RequestBody @Valid QuestionDTO object) throws Exception {
                 return questionsService.save(object);
         }
 
@@ -76,7 +77,8 @@ public class QuestionController {
                         @ApiResponse(responseCode = "404", description = "Não Encontrado (Not Found)"),
                         @ApiResponse(responseCode = "500", description = "Erro interno (Internal Server Error)")
         })
-        public ResponseEntity<Object> edit(@PathVariable("idObjeto") Long idObject, @RequestBody QuestionDTO object)
+        public ResponseEntity<Object> edit(@PathVariable("idObjeto") Long idObject,
+                        @RequestBody @Valid QuestionDTO object)
                         throws Exception {
                 return questionsService.edit(idObject, object);
         }

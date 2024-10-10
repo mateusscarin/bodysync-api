@@ -22,91 +22,88 @@ import com.br.bodysync.service.util.ApiResponse;
 @Service
 public class ObjectiveServiceImpl implements ObjectiveService {
 
-    @Autowired
-    private ObjectiveRepository objectiveRepository;
+        @Autowired
+        private ObjectiveRepository objectiveRepository;
 
-    @Autowired
-    private CustomObjectMapper<Objective, ObjectiveDTO> objectiveMapper;
+        @Autowired
+        private CustomObjectMapper<Objective, ObjectiveDTO> objectiveMapper;
 
-    @Override
-    public ResponseEntity<Object> save(ObjectiveDTO dto) throws Exception {
-        if (objectiveRepository.existsByName(dto.getName())) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(
-                    "Não é possivel cadastrar objetivo. Já existe outra objetivo com o mesmo nome."));
+        @Override
+        public ResponseEntity<Object> save(ObjectiveDTO dto) throws Exception {
+                if (objectiveRepository.existsByName(dto.getName())) {
+                        return ResponseEntity.badRequest().body(new ApiResponse<>(
+                                        "Não é possivel cadastrar objetivo. Já existe outra objetivo com o mesmo nome."));
+                }
+                Objective result = objectiveRepository.saveAndFlush(objectiveMapper.convertToEntity(dto));
+                return ResponseEntity.created(
+                                ServletUriComponentsBuilder
+                                                .fromCurrentRequest()
+                                                .path("/{id}")
+                                                .buildAndExpand(result.getId())
+                                                .toUri())
+                                .build();
         }
-        Objective objective = new Objective();
-        objective.setName(dto.getDescription());
-        objective.setDescription(dto.getName());
-        Objective result = objectiveRepository.saveAndFlush(objective);
-        return ResponseEntity.created(
-                ServletUriComponentsBuilder
-                        .fromCurrentRequest()
-                        .path("/{id}")
-                        .buildAndExpand(result.getId())
-                        .toUri())
-                .build();
-    }
 
-    @Override
-    public ResponseEntity<Object> edit(Long idObject, ObjectiveDTO object) throws Exception {
-        Objective sourceData = objectiveMapper.convertToEntity(object);
-        Objective toEdit = objectiveRepository.findById(idObject)
-                .orElseThrow(
-                        () -> new NoSuchElementException("O objetivo com ID " + idObject + " não foi encontrado!"));
-        Optional<Objective> optObjective = objectiveRepository.findByName(object.getName());
-        if (optObjective.isPresent() && !(optObjective.get().getId().equals(idObject))) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(
-                    "Não é possivel salvar objetivo. Já existe outro objetivo com o mesmo nome."));
+        @Override
+        public ResponseEntity<Object> edit(Long idObject, ObjectiveDTO object) throws Exception {
+                Objective sourceData = objectiveMapper.convertToEntity(object);
+                Objective toEdit = objectiveRepository.findById(idObject)
+                                .orElseThrow(() -> new NoSuchElementException("O objetivo com ID " + idObject
+                                                + " não foi encontrado!"));
+                Optional<Objective> optObjective = objectiveRepository.findByName(object.getName());
+                if (optObjective.isPresent() && !(optObjective.get().getId().equals(idObject))) {
+                        return ResponseEntity.badRequest().body(new ApiResponse<>(
+                                        "Não é possivel salvar objetivo. Já existe outro objetivo com o mesmo nome."));
+                }
+                BeanUtils.copyProperties(sourceData, toEdit, "id", "createdDate", "status");
+                sourceData.setId(idObject);
+                Objective result = objectiveRepository.saveAndFlush(toEdit);
+                return ResponseEntity.status(HttpStatus.OK)
+                                .body(new ApiResponse<>(objectiveMapper.convertToDto(result)));
         }
-        sourceData.setCreatedDate(toEdit.getCreatedDate());
-        sourceData.setStatus(toEdit.isStatus());
-        sourceData.setUpdateDate(LocalDateTime.now());
-        sourceData.setId(idObject);
-        BeanUtils.copyProperties(sourceData, toEdit, "id", "createdDate", "status");
-        Objective result = objectiveRepository.saveAndFlush(toEdit);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new ApiResponse<>(objectiveMapper.convertToDto(result)));
-    }
 
-    @Override
-    public ResponseEntity<Object> findById(Long idObject) throws Exception {
-        Objective objective = objectiveRepository.findById(idObject)
-                .orElseThrow(
-                        () -> new NoSuchElementException("O objetivo com ID " + idObject + " não foi encontrado!"));
-
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(objectiveMapper.convertToDto(objective)));
-    }
-
-    @Override
-    public ResponseEntity<Object> findAll() throws Exception {
-
-        List<ObjectiveDTO> objectiveDTOs = objectiveMapper.convertToDtoList(objectiveRepository.findAll());
-        if (objectiveDTOs.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("Não existe objetivos cadastrados no sistema"));
+        @Override
+        public ResponseEntity<Object> findById(Long idObject) throws Exception {
+                Objective objective = objectiveRepository.findById(idObject)
+                                .orElseThrow(() -> new NoSuchElementException(
+                                                "O objetivo com ID " + idObject + " não foi encontrado!"));
+                return ResponseEntity.status(HttpStatus.OK)
+                                .body(new ApiResponse<>(objectiveMapper.convertToDto(objective)));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(objectiveDTOs));
-    }
 
-    @Override
-    public ResponseEntity<Object> delete(Long idObject) throws Exception {
-        objectiveRepository.findById(idObject)
-                .orElseThrow(
-                        () -> new NoSuchElementException("O objetivo com ID " + idObject + " não foi encontrado!"));
-        objectiveRepository.deleteById(idObject);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>("O objetivo foi excluído com sucesso."));
-    }
+        @Override
+        public ResponseEntity<Object> findAll() throws Exception {
 
-    @Override
-    public ResponseEntity<Object> changeStatus(Long idObject) throws Exception {
-        Objective objeto = objectiveRepository.findById(idObject)
-                .orElseThrow(
-                        () -> new NoSuchElementException("O objetivo com ID " + idObject + " não foi encontrado!"));
-        objeto.setStatus(!objeto.isStatus());
-        objeto.setUpdateDate(LocalDateTime.now());
-        Objective objetoAtualizado = objectiveRepository.saveAndFlush(objeto);
-        ObjectiveDTO objetoDTO = objectiveMapper.convertToDto(objetoAtualizado);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(objetoDTO));
-    }
+                List<ObjectiveDTO> objectiveDTOs = objectiveMapper.convertToDtoList(objectiveRepository.findAll());
+                if (objectiveDTOs.isEmpty()) {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                        .body(new ApiResponse<>("Não existe objetivos cadastrados no sistema"));
+                }
+                return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(objectiveDTOs));
+        }
+
+        @Override
+        public ResponseEntity<Object> delete(Long idObject) throws Exception {
+                objectiveRepository.findById(idObject)
+                                .orElseThrow(
+                                                () -> new NoSuchElementException("O objetivo com ID " + idObject
+                                                                + " não foi encontrado!"));
+                objectiveRepository.deleteById(idObject);
+                return ResponseEntity.status(HttpStatus.OK)
+                                .body(new ApiResponse<>("O objetivo foi excluído com sucesso."));
+        }
+
+        @Override
+        public ResponseEntity<Object> changeStatus(Long idObject) throws Exception {
+                Objective objeto = objectiveRepository.findById(idObject)
+                                .orElseThrow(
+                                                () -> new NoSuchElementException("O objetivo com ID " + idObject
+                                                                + " não foi encontrado!"));
+                objeto.setStatus(!objeto.isStatus());
+                objeto.setUpdateDate(LocalDateTime.now());
+                Objective objetoAtualizado = objectiveRepository.saveAndFlush(objeto);
+                return ResponseEntity.status(HttpStatus.OK)
+                                .body(new ApiResponse<>(objectiveMapper.convertToDto(objetoAtualizado)));
+        }
 
 }
